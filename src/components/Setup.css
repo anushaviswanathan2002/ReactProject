@@ -1,0 +1,170 @@
+.setup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.75rem;
+  animation: fadeIn 0.4s ease;
+}
+
+/* Logo */
+.setup-logo {
+  text-align: center;
+}
+
+.logo-icon {
+  font-size: 4rem;
+  display: block;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
+}
+
+.logo-title {
+  font-size: 3rem;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -1px;
+  text-shadow: 0 3px 14px rgba(0,0,0,0.4);
+  margin: 0;
+}
+
+.logo-sub {
+  color: rgba(255,255,255,0.7);
+  font-size: 0.95rem;
+  margin-top: 0.25rem;
+}
+
+/* Sections */
+.setup-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.setup-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: rgba(255,255,255,0.6);
+}
+
+/* Team inputs */
+.team-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.team-input {
+  flex: 1;
+  padding: 0.7rem 1rem;
+  background: rgba(255,255,255,0.12);
+  border: 1.5px solid rgba(255,255,255,0.25);
+  border-radius: 10px;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.team-input:focus {
+  border-color: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.2);
+}
+
+.team-input::placeholder {
+  color: rgba(255,255,255,0.35);
+}
+
+.btn-remove {
+  background: rgba(239,68,68,0.2);
+  border: 1.5px solid rgba(239,68,68,0.4);
+  color: #f87171;
+  border-radius: 8px;
+  padding: 0.45rem 0.7rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.btn-remove:hover {
+  background: rgba(239,68,68,0.35);
+}
+
+.btn-add-team {
+  align-self: flex-start;
+  background: none;
+  border: 1.5px dashed rgba(255,255,255,0.35);
+  color: rgba(255,255,255,0.7);
+  border-radius: 8px;
+  padding: 0.45rem 1rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.btn-add-team:hover {
+  border-color: rgba(255,255,255,0.65);
+  color: #fff;
+}
+
+/* Rounds control */
+.rounds-control {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.rounds-btn {
+  width: 40px;
+  height: 40px;
+  background: rgba(255,255,255,0.15);
+  border: 1.5px solid rgba(255,255,255,0.3);
+  border-radius: 10px;
+  color: #fff;
+  font-size: 1.3rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.rounds-btn:hover {
+  background: rgba(255,255,255,0.28);
+}
+
+.rounds-value {
+  font-size: 2rem;
+  font-weight: 900;
+  color: #fff;
+  min-width: 2.5rem;
+  text-align: center;
+}
+
+/* Start button */
+.btn-start {
+  width: 100%;
+  padding: 1.1rem;
+  font-size: 1.2rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #f59e0b, #ef4444, #ec4899);
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  box-shadow: 0 6px 24px rgba(239,68,68,0.4);
+  letter-spacing: 0.5px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-start:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(239,68,68,0.5);
+}
+
+.btn-start:active {
+  transform: scale(0.98);
+}
