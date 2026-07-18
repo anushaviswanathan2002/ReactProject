@@ -1,0 +1,70 @@
+:root {
+  color-scheme: light dark;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #1e1b4b, #0f172a);
+  color: #f8fafc;
+}
+
+.counter {
+  text-align: center;
+  padding: 3rem 4rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+
+.counter h1 {
+  margin: 0 0 0.5rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.count {
+  font-size: 5rem;
+  font-weight: 700;
+  margin: 1rem 0 2rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.buttons {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.btn {
+  cursor: pointer;
+  border: none;
+  border-radius: 12px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #f8fafc;
+  background: #6366f1;
+  transition: transform 0.08s ease, background 0.2s ease;
+}
+
+.btn:hover {
+  background: #818cf8;
+}
+
+.btn:active {
+  transform: scale(0.95);
+}
+
+.btn.reset {
+  background: #334155;
+}
+
+.btn.reset:hover {
+  background: #475569;
+}
