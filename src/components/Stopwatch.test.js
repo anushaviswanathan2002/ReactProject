@@ -1,15 +1,15 @@
 import React from 'react';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Stopwatch from './Stopwatch';
 
 describe('Stopwatch Component', () => {
   beforeEach(() => {
-    jest.useFakeTimers();
+    jest.useFakeTimers('modern');
   });
 
   afterEach(() => {
-    jest.runOnlyPendingTimers();
+    jest.clearAllTimers();
     jest.useRealTimers();
   });
 
@@ -80,19 +80,44 @@ describe('Stopwatch Component', () => {
 
     test('timer does not increment when paused', () => {
       render(<Stopwatch />);
-      fireEvent.click(screen.getByTestId('start-btn'));
+      
+      // Start the timer
+      act(() => {
+        fireEvent.click(screen.getByTestId('start-btn'));
+      });
+
+      // Let it run for 100ms
       act(() => {
         jest.advanceTimersByTime(100);
       });
-      fireEvent.click(screen.getByTestId('pause-btn'));
 
+      // Get time when running
       const display = screen.getByTestId('time-display');
+      const timeWhenRunning = display.textContent;
+      
+      // Should not be at 00:00.00 after running
+      expect(timeWhenRunning).not.toBe('00:00.00');
+
+      // Pause the timer
+      act(() => {
+        fireEvent.click(screen.getByTestId('pause-btn'));
+      });
+
+      // Verify Pause button changed back to Start
+      expect(screen.getByTestId('start-btn')).toBeInTheDocument();
+      expect(screen.queryByTestId('pause-btn')).not.toBeInTheDocument();
+
+      // Record time when paused
       const timeWhenPaused = display.textContent;
 
+      // Advance time further while paused
       act(() => {
         jest.advanceTimersByTime(100);
       });
+
+      // Time should not have changed
       expect(display.textContent).toBe(timeWhenPaused);
+      expect(display.textContent).toBe(timeWhenRunning);
     });
   });
 
