@@ -2,14 +2,20 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import Login from './components/Login'
 import Signup from './components/Signup'
-import TodoApp from './components/TodoApp'
-import Drawing from './components/Drawing'
+import MemoryGame from './components/MemoryGame'
 import './App.css'
 
 function App() {
   const [user, setUser] = useState(null)
   const [view, setView] = useState('login')
   const [loading, setLoading] = useState(true)
+  const [bestScores, setBestScores] = useState([])
+
+  const loadBestScores = () => {
+    axios.get('/api/scores/me')
+      .then(res => setBestScores(res.data))
+      .catch(() => setBestScores([]))
+  }
 
   useEffect(() => {
     // Check if user is logged in
@@ -19,7 +25,8 @@ function App() {
       axios.get('/api/auth/me')
         .then(res => {
           setUser(res.data)
-          setView('todos')
+          setView('game')
+          loadBestScores()
         })
         .catch(() => {
           localStorage.removeItem('token')
@@ -34,13 +41,15 @@ function App() {
     localStorage.setItem('token', token)
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
     setUser(userData)
-    setView('todos')
+    setView('game')
+    loadBestScores()
   }
 
   const handleLogout = () => {
     localStorage.removeItem('token')
     delete axios.defaults.headers.common['Authorization']
     setUser(null)
+    setBestScores([])
     setView('login')
   }
 
@@ -52,7 +61,7 @@ function App() {
     <div className="app">
       {user && (
         <div className="navbar">
-          <h1>Memory</h1>
+          <h1>🧠 Memory Cards</h1>
           <div className="user-info">
             <span>Welcome, {user.email}</span>
             <button onClick={handleLogout} className="logout-btn">Logout</button>
@@ -67,11 +76,8 @@ function App() {
         {view === 'signup' && (
           <Signup onSuccess={handleLoginSuccess} onLoginClick={() => setView('login')} />
         )}
-        {view === 'todos' && (
-          <TodoApp user={user} onLogout={handleLogout} onDrawingClick={() => setView('drawing')} />
-        )}
-        {view === 'drawing' && (
-          <Drawing onBack={() => setView('todos')} />
+        {view === 'game' && (
+          <MemoryGame user={user} bestScores={bestScores} onScoreSaved={loadBestScores} />
         )}
       </div>
     </div>

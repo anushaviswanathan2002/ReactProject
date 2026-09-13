@@ -38,15 +38,17 @@ function initializeDatabase() {
       )
     `)
 
-    // Todos table
+    // Scores table (one best score per user per difficulty)
     db.run(`
-      CREATE TABLE IF NOT EXISTS todos (
+      CREATE TABLE IF NOT EXISTS scores (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER NOT NULL,
-        title TEXT NOT NULL,
-        completed BOOLEAN DEFAULT 0,
+        difficulty TEXT NOT NULL,
+        moves INTEGER NOT NULL,
+        time_seconds INTEGER NOT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        UNIQUE (user_id, difficulty)
       )
     `)
   })
@@ -137,72 +139,81 @@ app.get('/auth/me', authMiddleware, (req, res) => {
   })
 })
 
-// Routes - Todos
+// Routes - Scores
 
-app.get('/todos', authMiddleware, (req, res) => {
-  db.all(
-    'SELECT id, title, completed FROM todos WHERE user_id = ? ORDER BY created_at DESC',
-    [req.userId],
-    (err, todos) => {
-      if (err) return res.status(500).json({ error: 'Failed to fetch todos' })
-      res.json(todos || [])
-    }
-  )
-})
+// Submit a finished game score. Keeps only the best score
+// (fewest moves, then fastest time) per user + difficulty.
+app.post('/scores', authMiddleware, (req, res) => {
+  const { difficulty, moves, time_seconds } = req.body
 
-app.post('/todos', authMiddleware, (req, res) => {
-  const { title } = req.body
-
-  if (!title || !title.trim()) {
-    return res.status(400).json({ error: 'Title required' })
+  if (!['easy', 'medium', 'hard'].includes(difficulty)) {
+    return res.status(400).json({ error: 'Invalid difficulty' })
+  }
+  if (!Number.isInteger(moves) || moves < 1) {
+    return res.status(400).json({ error: 'Invalid moves value' })
+  }
+  if (!Number.isInteger(time_seconds) || time_seconds < 0) {
+    return res.status(400).json({ error: 'Invalid time value' })
   }
 
-  db.run(
-    'INSERT INTO todos (user_id, title, completed) VALUES (?, ?, 0)',
-    [req.userId, title],
-    function(err) {
-      if (err) return res.status(500).json({ error: 'Failed to create todo' })
-      res.json({
-        id: this.lastID,
-        title,
-        completed: false
-      })
+  db.get(
+    'SELECT * FROM scores WHERE user_id = ? AND difficulty = ?',
+    [req.userId, difficulty],
+    (err, existing) => {
+      if (err) return res.status(500).json({ error: 'Failed to save score' })
+
+      if (!existing) {
+        db.run(
+          'INSERT INTO scores (user_id, difficulty, moves, time_seconds) VALUES (?, ?, ?, ?)',
+          [req.userId, difficulty, moves, time_seconds],
+          (err) => {
+            if (err) return res.status(500).json({ error: 'Failed to save score' })
+            res.json({ saved: true, new_best: true })
+          }
+        )
+      } else {
+        const better =
+          moves < existing.moves ||
+          (moves === existing.moves && time_seconds < existing.time_seconds)
+        if (!better) {
+          return res.json({ saved: false, new_best: false })
+        }
+        db.run(
+          'UPDATE scores SET moves = ?, time_seconds = ?, created_at = CURRENT_TIMESTAMP WHERE id = ?',
+          [moves, time_seconds, existing.id],
+          (err) => {
+            if (err) return res.status(500).json({ error: 'Failed to save score' })
+            res.json({ saved: true, new_best: true })
+          }
+        )
+      }
     }
   )
 })
 
-app.put('/todos/:id', authMiddleware, (req, res) => {
-  const { id } = req.params
-  const { completed } = req.body
-
-  db.run(
-    'UPDATE todos SET completed = ? WHERE id = ? AND user_id = ?',
-    [completed ? 1 : 0, id, req.userId],
-    function(err) {
-      if (err) return res.status(500).json({ error: 'Failed to update todo' })
-      if (this.changes === 0) {
-        return res.status(404).json({ error: 'Todo not found' })
-      }
-      res.json({
-        id: parseInt(id),
-        completed
-      })
+// Best scores of the current user (all difficulties)
+app.get('/scores/me', authMiddleware, (req, res) => {
+  db.all(
+    'SELECT difficulty, moves, time_seconds, created_at FROM scores WHERE user_id = ?',
+    [req.userId],
+    (err, scores) => {
+      if (err) return res.status(500).json({ error: 'Failed to fetch scores' })
+      res.json(scores || [])
     }
   )
 })
 
-app.delete('/todos/:id', authMiddleware, (req, res) => {
-  const { id } = req.params
-
-  db.run(
-    'DELETE FROM todos WHERE id = ? AND user_id = ?',
-    [id, req.userId],
-    function(err) {
-      if (err) return res.status(500).json({ error: 'Failed to delete todo' })
-      if (this.changes === 0) {
-        return res.status(404).json({ error: 'Todo not found' })
-      }
-      res.json({ success: true })
+// Global leaderboard, best across all users per difficulty
+app.get('/scores/leaderboard', (req, res) => {
+  db.all(
+    `SELECT u.email, s.difficulty, s.moves, s.time_seconds
+     FROM scores s
+     JOIN users u ON u.id = s.user_id
+     ORDER BY s.difficulty ASC, s.moves ASC, s.time_seconds ASC
+     LIMIT 100`,
+    (err, scores) => {
+      if (err) return res.status(500).json({ error: 'Failed to fetch leaderboard' })
+      res.json(scores || [])
     }
   )
 })
