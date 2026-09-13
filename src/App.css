@@ -1,0 +1,56 @@
+.app {
+  min-height: 100vh;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+}
+
+.navbar h1 {
+  color: white;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.user-info {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  color: white;
+}
+
+.logout-btn {
+  padding: 10px 20px;
+  background: rgba(255, 59, 48, 0.8);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.logout-btn:hover {
+  background: rgba(255, 59, 48, 1);
+  transform: translateY(-2px);
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.loading {
+  color: white;
+  text-align: center;
+  font-size: 18px;
+  padding: 50px;
+}
