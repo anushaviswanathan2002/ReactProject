@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import Timer from './Timer'
 import './TodoApp.css'
 
 function TodoApp({ user }) {
@@ -66,6 +67,7 @@ function TodoApp({ user }) {
 
   return (
     <div className="todo-container">
+      <Timer />
       <div className="todo-card">
         <div className="todo-header">
           <h2>My To-Dos</h2>
