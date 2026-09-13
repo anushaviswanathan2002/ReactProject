@@ -3,6 +3,7 @@ import axios from 'axios'
 import Login from './components/Login'
 import Signup from './components/Signup'
 import TodoApp from './components/TodoApp'
+import Drawing from './components/Drawing'
 import './App.css'
 
 function App() {
@@ -67,7 +68,10 @@ function App() {
           <Signup onSuccess={handleLoginSuccess} onLoginClick={() => setView('login')} />
         )}
         {view === 'todos' && (
-          <TodoApp user={user} onLogout={handleLogout} />
+          <TodoApp user={user} onLogout={handleLogout} onDrawingClick={() => setView('drawing')} />
+        )}
+        {view === 'drawing' && (
+          <Drawing onBack={() => setView('todos')} />
         )}
       </div>
     </div>

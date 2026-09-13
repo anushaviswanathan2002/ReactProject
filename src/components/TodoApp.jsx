@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import './TodoApp.css'
 
-function TodoApp({ user }) {
+function TodoApp({ user, onDrawingClick }) {
   const [todos, setTodos] = useState([])
   const [newTodo, setNewTodo] = useState('')
   const [loading, setLoading] = useState(true)
@@ -85,6 +85,7 @@ function TodoApp({ user }) {
             className="todo-input"
           />
           <button type="submit" className="add-btn">Add</button>
+          <button type="button" onClick={onDrawingClick} className="draw-btn">🎨 Draw</button>
         </form>
 
         <div className="todos-list">
